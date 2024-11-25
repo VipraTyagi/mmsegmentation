@@ -1,0 +1,1 @@
+docker run --gpus all --shm-size=8g -it -v /mnt/c/Users/Anton/Documents/Datasets:/mmsegmentation/data -v /home/anton-u/Code/mmsegmentation:/mmsegmentation mmsegmentation

@@ -2535,3 +2535,69 @@ class RandomDepthMix(BaseTransform):
 
         results['img'] = img
         return results
+
+@TRANSFORMS.register_module()
+class LoadAnnotationsFromNPZ(object):
+    """Load annotations from NPZ file."""
+
+    def __init__(self, reduce_zero_label=False):
+        self.reduce_zero_label = reduce_zero_label
+
+    def __call__(self, results):
+        """Call function to load annotations from NPZ file.
+
+        Args:
+            results (dict): Result dict from :obj:`mmseg.CustomDataset`.
+
+        Returns:
+            dict: The dict contains loaded semantic segmentation annotations.
+        """
+
+        seg_map = results.get('gt_seg_map', None)
+        if seg_map is None:
+            seg_map = np.load(results['seg_map_path'])['array']
+
+        # modify if custom classes
+        if results.get('label_map', None) is not None:
+            for old_id, new_id in results['label_map'].items():
+                seg_map[seg_map == old_id] = new_id
+
+        # reduce zero label
+        if self.reduce_zero_label:
+            # avoid using underflow conversion
+            seg_map[seg_map == 0] = 255
+            seg_map = seg_map - 1
+            seg_map[seg_map == 254] = 255
+
+        results['gt_seg_map'] = seg_map
+        if 'seg_fields' not in results:
+            results['seg_fields'] = []
+        results['seg_fields'].append('gt_seg_map')
+        return results
+
+    def __repr__(self):
+        repr_str = self.__class__.__name__
+        repr_str += f'(reduce_zero_label={self.reduce_zero_label})'
+        return repr_str
+
+
+@TRANSFORMS.register_module()
+class PhenoBenchReduceClasses(object):
+    """Convert class ids 3->1 and 4->2."""
+
+    def __call__(self, results):
+        """Call function to reduce classes.
+
+        Args:
+            results (dict): Result dict from :obj:`mmseg.CustomDataset`.
+
+        Returns:
+            dict: The dict contains reduced semantic segmentation annotations.
+        """
+
+        seg_map = results['gt_seg_map']
+        seg_map[seg_map == 3] = 1
+        seg_map[seg_map == 4] = 2
+
+        results['gt_seg_map'] = seg_map
+        return results
