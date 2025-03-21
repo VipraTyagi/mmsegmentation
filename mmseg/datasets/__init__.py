@@ -26,6 +26,7 @@ from .potsdam import PotsdamDataset
 from .refuge import REFUGEDataset
 from .stare import STAREDataset
 from .synapse import SynapseDataset
+from .phenobench_dataset import PhenobenchDataset
 from .cropandweed import CropAndWeedDataset
 # yapf: disable
 from .transforms import (CLAHE, AdjustGamma, Albu, BioMedical3DPad,
@@ -41,8 +42,11 @@ from .transforms import (CLAHE, AdjustGamma, Albu, BioMedical3DPad,
                          ResizeShortestEdge, ResizeToMultiple, RGB2Gray,
                          SegRescale)
 from .voc import PascalVOCDataset
-from .syclops_dataset import CustomSegDataset
 from .phenobench_dataset import PhenobenchDataset
+from .zurich_dataset import ZurichDataset
+from .uavbonn import uavbonnDataset
+from .agrigaia import AgrigaiaDataset
+
 from .cropandweed import CropAndWeedDataset
 # yapf: enable
 __all__ = [
@@ -63,6 +67,8 @@ __all__ = [
     'SynapseDataset', 'REFUGEDataset', 'MapillaryDataset_v1',
     'MapillaryDataset_v2', 'Albu', 'LEVIRCDDataset',
     'LoadMultipleRSImageFromFile', 'LoadSingleRSImageFromFile',
-    'ConcatCDInput', 'BaseCDDataset', 'DSDLSegDataset', 'BDD100KDataset',
-    'NYUDataset', 'HSIDrive20Dataset', 'PhenobenchDataset', 'CropAndWeedDataset', 'CustomSegDataset',
+    'ConcatCDInput', 'BaseCDDataset', 'PhenobenchDataset','DSDLSegDataset', 'BDD100KDataset',
+    'NYUDataset', 'HSIDrive20Dataset', 'PhenobenchDataset', 'CropAndWeedDataset', 'CustomSegDataset', 'ZurichDataset', 'CropAndWeedDataset', 'uavbonnDataset', 
+    'uavzurichDataset', 'AgrigaiaDataset'
+
 ]

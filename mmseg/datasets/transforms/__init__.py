@@ -26,5 +26,5 @@ __all__ = [
     'BioMedical3DRandomFlip', 'BioMedicalRandomGamma', 'BioMedical3DPad',
     'RandomRotFlip', 'Albu', 'LoadSingleRSImageFromFile', 'ConcatCDInput',
     'LoadMultipleRSImageFromFile', 'LoadDepthAnnotation', 'RandomDepthMix',
-    'RandomFlip', 'Resize', 'LoadAnnotationsFromNPZ', 'PhenoBenchReduceClasses'
+    'RandomFlip', 'Resize', 'LoadAnnotationsFromNPZ', 'PhenoBenchReduceClasses', 'CropAndWeedDataset','uavbonnDataset','uavzurichDataset','AgrigaiaDataset'
 ]
