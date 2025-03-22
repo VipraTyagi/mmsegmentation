@@ -43,9 +43,9 @@ from .transforms import (CLAHE, AdjustGamma, Albu, BioMedical3DPad,
                          SegRescale)
 from .voc import PascalVOCDataset
 from .phenobench_dataset import PhenobenchDataset
-from .zurich_dataset import ZurichDataset
-from .uavbonn import uavbonnDataset
-from .agrigaia import AgrigaiaDataset
+# from .zurich_dataset import ZurichDataset
+# from .uavbonn import uavbonnDataset
+# from .agrigaia import AgrigaiaDataset
 
 from .cropandweed import CropAndWeedDataset
 # yapf: enable

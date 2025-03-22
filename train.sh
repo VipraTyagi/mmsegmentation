@@ -1,0 +1,1 @@
+python3 /home/vipra/Thesis/Semantic_Segmentation/mmsegmentation/tools/train.py /home/vipra/Thesis/Semantic_Segmentation/mmsegmentation/configs/thesisdata/phenobench.py --work-dir /home/vipra/Thesis/Semantic_Segmentation/experiments/phenobench/

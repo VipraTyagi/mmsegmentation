@@ -9,9 +9,10 @@ from mmengine import fileio
 @DATASETS.register_module()
 class CropAndWeedDataset(BaseSegDataset):
     METAINFO = dict(
-        classes=('background', 'crop', 'weed'),
-        palette=[[0, 0, 0], [0, 255, 0], [255, 0, 0]]
-    )
+    classes=('background', 'sugarbeet', 'weed'),
+    palette=[[0, 0, 0], [0, 255, 0], [ 255,0, 0]]
+)
+
 
     def __init__(self, **kwargs):
         super().__init__(
@@ -54,15 +55,27 @@ class CropAndWeedDataset(BaseSegDataset):
             dict: The dict contains loaded image and semantic segmentation annotations.
         """
         img_info = dict(filename=img_path)
-        seg_map = np.array(Image.open(seg_map_path))
-        
-        # CropAndWeedDataset :Crop==0, Weed==1, Background==2
-        # PhenoBenchDataset :Crop==1, Weed==2, Background==0
-        seg_map[seg_map == 0] = 1
-        seg_map[seg_map == 1] = 2
-        seg_map[seg_map == 2] = 0
-        
-        img_info['gt_seg_map'] = seg_map
+
+        # Load segmentation mask with explicit uint8 type
+        seg_map = np.array(Image.open(seg_map_path).convert("L"), dtype=np.uint8)
+
+        # Debugging: Check original unique values
+        print("Before Remapping - Unique values:", np.unique(seg_map))
+
+        # Create a copy to prevent modifying the original mask
+        seg_map_fixed = seg_map.copy()
+
+        # Define correct label mapping (manually replacing values)
+        seg_map_fixed[seg_map == 255] = 0   # Background → 0
+        seg_map_fixed[seg_map == 1] = 1     # Crop (Sugarbeet) → 1
+        seg_map_fixed[seg_map == 2] = 2     # Weed → 2
+
+        # Debugging: Check if values are correctly mapped
+        print("After Remapping - Unique values:", np.unique(seg_map_fixed))
+
+        # Store corrected segmentation map
+        img_info['gt_seg_map'] = seg_map_fixed.astype(np.uint8)  # Ensure dtype
+
         return img_info
 
     def get_ann_info(self, idx):
