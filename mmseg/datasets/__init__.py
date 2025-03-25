@@ -40,12 +40,12 @@ from .transforms import (CLAHE, AdjustGamma, Albu, BioMedical3DPad,
                          PhotoMetricDistortion, RandomCrop, RandomCutOut,
                          RandomMosaic, RandomRotate, RandomRotFlip, Rerange,
                          ResizeShortestEdge, ResizeToMultiple, RGB2Gray,
-                         SegRescale)
+                         SegRescale,ZurichDataMapping)
 from .voc import PascalVOCDataset
 from .phenobench_dataset import PhenobenchDataset
-# from .zurich_dataset import ZurichDataset
-# from .uavbonn import uavbonnDataset
-# from .agrigaia import AgrigaiaDataset
+from .zurich_dataset import ZurichDataset
+from .uavbonn import uavbonnDataset
+from .agrigaia import AgrigaiaDataset
 
 from .cropandweed import CropAndWeedDataset
 # yapf: enable
@@ -69,6 +69,6 @@ __all__ = [
     'LoadMultipleRSImageFromFile', 'LoadSingleRSImageFromFile',
     'ConcatCDInput', 'BaseCDDataset', 'PhenobenchDataset','DSDLSegDataset', 'BDD100KDataset',
     'NYUDataset', 'HSIDrive20Dataset', 'PhenobenchDataset', 'CropAndWeedDataset', 'CustomSegDataset', 'ZurichDataset', 'CropAndWeedDataset', 'uavbonnDataset', 
-    'uavzurichDataset', 'AgrigaiaDataset'
+    'uavzurichDataset', 'AgrigaiaDataset','ZurichDataMapping'
 
 ]

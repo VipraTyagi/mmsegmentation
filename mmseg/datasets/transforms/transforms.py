@@ -2601,3 +2601,31 @@ class PhenoBenchReduceClasses(object):
 
         results['gt_seg_map'] = seg_map
         return results
+    
+    
+@TRANSFORMS.register_module()
+class ZurichDataMapping(object):
+    """Map original labels to new labels for your dataset.
+
+    This transformation applies the following conversions on the segmentation mask:
+        - 10000 → 1 (Crop)
+        - 2 → 2 (Weed remains unchanged)
+        - Any value > 2 → 0
+    """
+
+    def __call__(self, results):
+        """Apply label mapping on the segmentation map.
+
+        Args:
+            results (dict): Result dict from the dataset loader containing 'gt_seg_map'.
+
+        Returns:
+            dict: The dict containing the updated segmentation annotations.
+        """
+        seg_map = results['gt_seg_map']
+        seg_map[seg_map == 10000] = 1
+        seg_map[seg_map == 2] = 2
+        seg_map[seg_map > 2] = 0
+
+        results['gt_seg_map'] = seg_map
+        return results
