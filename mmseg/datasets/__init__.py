@@ -69,6 +69,6 @@ __all__ = [
     'LoadMultipleRSImageFromFile', 'LoadSingleRSImageFromFile',
     'ConcatCDInput', 'BaseCDDataset', 'PhenobenchDataset','DSDLSegDataset', 'BDD100KDataset',
     'NYUDataset', 'HSIDrive20Dataset', 'PhenobenchDataset', 'CropAndWeedDataset', 'CustomSegDataset', 'ZurichDataset', 'CropAndWeedDataset', 'uavbonnDataset', 
-    'uavzurichDataset', 'AgrigaiaDataset','ZurichDataMapping'
+    'uavzurichDataset', 'AgrigaiaDataset','ZurichDataMapping', 'CropAndWeedMapping'
 
 ]

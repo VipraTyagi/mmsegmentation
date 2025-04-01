@@ -2629,3 +2629,29 @@ class ZurichDataMapping(object):
 
         results['gt_seg_map'] = seg_map
         return results
+@TRANSFORMS.register_module()
+class CropAndWeedMapping(object):
+    """Map original labels to the new labels for model compatibility:
+        - 4 (soil) mapped to 0 (background)
+        - 1 (crop/sugarbeet) remains 1
+        - 2 (weed) remains 2
+        - 3 (vegetation) remains 3
+    """
+
+    def __call__(self, results):
+        seg_map_path = results.get('seg_map_path')
+        if seg_map_path is None:
+            raise KeyError("Segmentation map path 'seg_map_path' not found in results.")
+
+        seg_map = np.array(Image.open(seg_map_path)).astype(np.uint16)
+
+        # Map soil (4) to background (0)
+        seg_map[seg_map == 4] = 0
+                # Map crop/sugarbeet (1) to 1 (even if redundant, this is explicit)
+        seg_map[seg_map == 1] = 1
+        # Map weed (2) to 2
+        seg_map[seg_map == 2] = 2
+        # Map vegetation (3) to 3
+        seg_map[seg_map == 3] = 3
+        results['gt_seg_map'] = seg_map
+        return results
