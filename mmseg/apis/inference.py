@@ -114,6 +114,23 @@ def inference_model(model: BaseSegmentor,
     # forward the model
     with torch.no_grad():
         results = model.test_step(data)
+        
+        # >>> Custom Postprocessing Start <<<
+    # For a model trained on 2 classes, if any unwanted labels (3 or 4) appear,
+    # remap them to background (0)
+    if hasattr(results, 'pred_sem_seg'):
+        pred_mask = results.pred_sem_seg
+        if torch.is_tensor(pred_mask):
+            pred_mask = pred_mask.cpu().numpy()
+        # Print unique values before remapping
+        print("Before remapping, unique labels:", np.unique(pred_mask))
+        # pred_mask[pred_mask == 3]=255
+        # Remap labels: ignore label 3 and remap label 4 to background (0)
+        pred_mask[(pred_mask == 3) | (pred_mask == 4)] = 0
+        # Print unique values after remapping
+        print("After remapping, unique labels:", np.unique(pred_mask))
+        results.pred_sem_seg = torch.from_numpy(pred_mask)
+    # <<< Custom Postprocessing End <<<
 
     return results if is_batch else results[0]
 
