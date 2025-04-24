@@ -15,7 +15,7 @@ data_preprocessor = dict(size=crop_size)
 
 model = dict(
     data_preprocessor=data_preprocessor,
-    decode_head=dict(num_classes=num_classes),
+    decode_head=dict(num_classes=num_classes,),
     test_cfg=dict(mode='slide', crop_size=(512, 512), stride=(341, 341)))
 
 optim_wrapper = dict(
