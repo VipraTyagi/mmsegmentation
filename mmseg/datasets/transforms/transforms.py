@@ -3,6 +3,7 @@ import copy
 import inspect
 import warnings
 from typing import Dict, List, Optional, Sequence, Tuple, Union
+from PIL import Image
 
 import cv2
 import mmcv
@@ -2502,40 +2503,6 @@ class RandomDepthMix(BaseTransform):
             Defaults to 0.75.
     """
 
-    def __init__(
-        self,
-        prob: float = 0.25,
-        mix_scale_ratio: float = 0.75,
-    ):
-        super().__init__()
-
-        self.prob = prob
-        self.mix_scale_ratio = mix_scale_ratio
-
-    def transform(self, results: dict) -> dict:
-        if random.random() > self.prob:
-            return results
-
-        h, w = results['img_shape'][:2]
-        left = int(w * random.random())
-        width_ratio = self.mix_scale_ratio * random.random()
-        width = int(max(1, (w - left) * width_ratio))
-
-        img = results['img']
-        depth_rescale_factor = results.get('depth_rescale_factor', 1)
-        depth_map = results['gt_depth_map'] / depth_rescale_factor
-
-        if img.ndim == 3:
-            for c in range(img.shape[-1]):
-                img[:, left:left + width, c] = depth_map[:, left:left + width]
-        elif img.ndim == 2:
-            img[:, left:left + width] = depth_map[:, left:left + width]
-        else:
-            raise ValueError(f'Invalid image shape ({img.shape})')
-
-        results['img'] = img
-        return results
-
 @TRANSFORMS.register_module()
 class LoadAnnotationsFromNPZ(object):
     """Load annotations from NPZ file."""
@@ -2601,8 +2568,39 @@ class PhenoBenchReduceClasses(object):
 
         results['gt_seg_map'] = seg_map
         return results
-    
-    
+    def __init__(
+        self,
+        prob: float = 0.25,
+        mix_scale_ratio: float = 0.75,
+    ):
+        super().__init__()
+
+        self.prob = prob
+        self.mix_scale_ratio = mix_scale_ratio
+
+    def transform(self, results: dict) -> dict:
+        if random.random() > self.prob:
+            return results
+
+        h, w = results['img_shape'][:2]
+        left = int(w * random.random())
+        width_ratio = self.mix_scale_ratio * random.random()
+        width = int(max(1, (w - left) * width_ratio))
+
+        img = results['img']
+        depth_rescale_factor = results.get('depth_rescale_factor', 1)
+        depth_map = results['gt_depth_map'] / depth_rescale_factor
+
+        if img.ndim == 3:
+            for c in range(img.shape[-1]):
+                img[:, left:left + width, c] = depth_map[:, left:left + width]
+        elif img.ndim == 2:
+            img[:, left:left + width] = depth_map[:, left:left + width]
+        else:
+            raise ValueError(f'Invalid image shape ({img.shape})')
+
+        results['img'] = img
+        return results
 @TRANSFORMS.register_module()
 class ZurichDataMapping(object):
     """Map original labels to new labels for your dataset.
@@ -2631,11 +2629,10 @@ class ZurichDataMapping(object):
         return results
 @TRANSFORMS.register_module()
 class CropAndWeedMapping(object):
-    """Map original labels to the new labels for model compatibility:
-        - 4 (soil) mapped to 0 (background)
-        - 1 (crop/sugarbeet) remains 1
-        - 2 (weed) remains 2
-        - 3 (vegetation) remains 3
+    """Map original labels to:
+        - 0 (background) if original is 0 or 4
+        - 1 (crop)       if original is 1
+        - 2 (weed)       if original is 2
     """
 
     def __call__(self, results):
@@ -2645,13 +2642,12 @@ class CropAndWeedMapping(object):
 
         seg_map = np.array(Image.open(seg_map_path)).astype(np.uint16)
 
-        # Map soil (4) to background (0)
-        seg_map[seg_map == 4] = 0
-                # Map crop/sugarbeet (1) to 1 (even if redundant, this is explicit)
+        # Map original 0 or 3 to 0
+        seg_map[(seg_map == 0) | (seg_map == 4)] = 0
+        # Map 1 to 1 (redundant but explicit)
         seg_map[seg_map == 1] = 1
-        # Map weed (2) to 2
+        # Map 2 to 2
         seg_map[seg_map == 2] = 2
-        # Map vegetation (3) to 3
-        seg_map[seg_map == 3] = 3
+
         results['gt_seg_map'] = seg_map
         return results

@@ -13,7 +13,8 @@ from .transforms import (CLAHE, AdjustGamma, Albu, BioMedical3DPad,
                          RandomDepthMix, RandomFlip, RandomMosaic,
                          RandomRotate, RandomRotFlip, Rerange, Resize,
                          ResizeShortestEdge, ResizeToMultiple, RGB2Gray,
-                         SegRescale, LoadAnnotationsFromNPZ, PhenoBenchReduceClasses, ZurichDataMapping,CropAndWeedMapping)
+                         SegRescale, LoadAnnotationsFromNPZ, PhenoBenchReduceClasses, ZurichDataMapping ,CropAndWeedMapping)
+
 # yapf: enable
 __all__ = [
     'LoadAnnotations', 'RandomCrop', 'BioMedical3DRandomCrop', 'SegRescale',
