@@ -2,20 +2,25 @@ _base_ = [
     '../_base_/models/deeplabv3plus_r50-d8.py',    '../_base_/datasets/cropandweed.py',
     '../_base_/default_runtime.py', '../_base_/schedules/schedule_80k.py'
 ]
-crop_size = (512, 512)
-data_preprocessor = dict(size=crop_size)
-model = dict(
-    data_preprocessor=data_preprocessor,
-    decode_head=dict(num_classes=150),
-    auxiliary_head=dict(num_classes=150))
-# Modify these according to your dataset
-num_classes = 4  # Replace with the actual number of classes in your dataset
+
+
 crop_size = (512, 512)
 data_preprocessor = dict(size=crop_size)
 
 model = dict(
     data_preprocessor=data_preprocessor,
-    decode_head=dict(num_classes=num_classes),
+    decode_head=dict(num_classes=150, ignore_index=3),
+    auxiliary_head=dict(num_classes=150, ignore_index=3))
+# Modify these according to your dataset
+num_classes = 3  # Replace with the actual number of classes in your dataset
+
+
+crop_size = (512, 512)
+data_preprocessor = dict(size=crop_size)
+
+model = dict(
+    data_preprocessor=data_preprocessor,
+    decode_head=dict(num_classes=num_classes,ignore_index=3),
     test_cfg=dict(mode='slide', crop_size=(512, 512), stride=(341, 341)))
 
 optim_wrapper = dict(

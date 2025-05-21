@@ -1,33 +1,24 @@
 _base_ = [
-    '../_base_/models/deeplabv3plus_r50-d8.py',    '../_base_/datasets/cropandweed4.py',
+    '../_base_/models/deeplabv3plus_r50-d8.py',    '../_base_/datasets/mixed_data.py',
     '../_base_/default_runtime.py', '../_base_/schedules/schedule_80k.py'
 ]
-
-
-crop_size = (512, 512)
-data_preprocessor = dict(size=crop_size)
-
-model = dict(
-    data_preprocessor=data_preprocessor,
-    decode_head=dict(num_classes=3, ignore_index=3),
-    auxiliary_head=dict(num_classes=3, ignore_index=3))
-# Modify these according to your dataset
-num_classes = 4  # Replace with the actual number of classes in your dataset
-
+num_classes = 3
 
 crop_size = (512, 512)
-data_preprocessor = dict(size=crop_size)
 
+data_preprocessor = dict(size=crop_size)
 model = dict(
     data_preprocessor=data_preprocessor,
-    decode_head=dict(num_classes=num_classes,ignore_index=3),
+    
+    decode_head=dict(num_classes=num_classes),
     test_cfg=dict(mode='slide', crop_size=(512, 512), stride=(341, 341)))
+
 
 optim_wrapper = dict(
     _delete_=True,
     type='OptimWrapper',
     optimizer=dict(
-        type='AdamW', lr=0.00005, betas=(0.9, 0.999), weight_decay=0.01),
+        type='AdamW', lr=0.00006, betas=(0.9, 0.999), weight_decay=0.01),
     paramwise_cfg=dict(
         custom_keys={
             'pos_block': dict(decay_mult=0.),
@@ -43,7 +34,7 @@ param_scheduler = [
         eta_min=0.0,
         power=1.0,
         begin=1500,
-        end=80000,
+        end=160000,
         by_epoch=False,
     )
 ]
@@ -58,10 +49,9 @@ default_hooks = dict(
     param_scheduler=dict(type='ParamSchedulerHook'),
     checkpoint=dict(type='CheckpointHook', by_epoch=False, interval=16000),
     sampler_seed=dict(type='DistSamplerSeedHook'),
-    visualization=dict(type='SegVisualizationHook', draw=True, show=False # Add your class names here                   
-                       ))
+    visualization=dict(type='SegVisualizationHook', draw=True, show=False))
 
-train_cfg = dict(type='IterBasedTrainLoop', max_iters=80000, val_interval=1000)
+train_cfg = dict(type='IterBasedTrainLoop', max_iters=160000, val_interval=1000)
 val_cfg = dict(type='ValLoop')
 test_cfg = dict(type='TestLoop')
 default_scope = 'mmseg'
@@ -79,5 +69,5 @@ visualizer = dict(
 log_processor = dict(by_epoch=False)
 
 log_level = 'INFO'
-load_from = None
-# resume = '/home/vipra/Thesis/Semantic_Segmentation/models/iter_32000.pth'
+# load_from = '/home/vipra/Thesis/Semantic_Segmentation/models/iter_32000.pth'
+# resume = True

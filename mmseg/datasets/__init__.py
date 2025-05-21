@@ -27,6 +27,7 @@ from .refuge import REFUGEDataset
 from .stare import STAREDataset
 from .synapse import SynapseDataset
 from .phenobench_dataset import PhenobenchDataset
+from .cropandweedfour import CropAndWeedfourDataset
 from .cropandweed import CropAndWeedDataset
 # yapf: disable
 from .transforms import (CLAHE, AdjustGamma, Albu, BioMedical3DPad,
@@ -40,14 +41,15 @@ from .transforms import (CLAHE, AdjustGamma, Albu, BioMedical3DPad,
                          PhotoMetricDistortion, RandomCrop, RandomCutOut,
                          RandomMosaic, RandomRotate, RandomRotFlip, Rerange,
                          ResizeShortestEdge, ResizeToMultiple, RGB2Gray,
-                         SegRescale,ZurichDataMapping)
+                         SegRescale,ZurichDataMapping,CropAndWeedMapping)
 from .voc import PascalVOCDataset
 from .phenobench_dataset import PhenobenchDataset
 from .zurich_dataset import ZurichDataset
 from .uavbonn import uavbonnDataset
 from .agrigaia import AgrigaiaDataset
-
+from .cropandweedfour import CropAndWeedfourDataset
 from .cropandweed import CropAndWeedDataset
+from .mixed_data import mixed_data
 # yapf: enable
 __all__ = [
     'BaseSegDataset', 'BioMedical3DRandomCrop', 'BioMedical3DRandomFlip',
@@ -69,6 +71,6 @@ __all__ = [
     'LoadMultipleRSImageFromFile', 'LoadSingleRSImageFromFile',
     'ConcatCDInput', 'BaseCDDataset', 'PhenobenchDataset','DSDLSegDataset', 'BDD100KDataset',
     'NYUDataset', 'HSIDrive20Dataset', 'PhenobenchDataset', 'CropAndWeedDataset', 'CustomSegDataset', 'ZurichDataset', 'CropAndWeedDataset', 'uavbonnDataset', 
-    'uavzurichDataset', 'AgrigaiaDataset','ZurichDataMapping', 'CropAndWeedMapping'
+    'uavzurichDataset', 'AgrigaiaDataset','ZurichDataMapping','CropAndWeedMapping', 'CropAndWeedfourDataset','mixed_data'
 
 ]

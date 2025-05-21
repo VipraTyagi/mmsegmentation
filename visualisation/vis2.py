@@ -2,7 +2,7 @@ from PIL import Image
 import matplotlib.pyplot as plt
 
 # Path to your concatenated image
-img_path = '/home/vipra/Thesis/Semantic_Segmentation/results/phenobench/vis_data/vis_image/test_05-15_00053_P0030943.png_683.png'
+img_path = '/home/vipra/Thesis/Semantic_Segmentation/results/SBNEW/vis_data/vis_image/test_ave-0035-0014.jpg_4.png'
 
 # Open the image and ensure it is in RGB mode
 img = Image.open(img_path).convert("RGB")
@@ -27,4 +27,4 @@ plt.title('Prediction')
 plt.axis('off')
 
 plt.tight_layout()
-plt.savefig('output_visualisation.png')
+plt.savefig('test.png')

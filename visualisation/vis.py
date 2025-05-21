@@ -48,5 +48,5 @@ def visualize_with_labels(vis_dir):
         plt.close()
 
 if __name__ == '__main__':
-    vis_dir = '/home/vipra/Thesis/Semantic_Segmentation/results/sugarbeetchange/vis_data/vis_image'
+    vis_dir = '/home/vipra/Thesis/Semantic_Segmentation/results/SBNEW/vis_data/vis_image'
     visualize_with_labels(vis_dir)
