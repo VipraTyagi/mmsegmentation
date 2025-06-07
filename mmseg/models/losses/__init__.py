@@ -17,5 +17,5 @@ __all__ = [
     'mask_cross_entropy', 'CrossEntropyLoss', 'reduce_loss',
     'weight_reduce_loss', 'weighted_loss', 'LovaszLoss', 'DiceLoss',
     'FocalLoss', 'TverskyLoss', 'OhemCrossEntropy', 'BoundaryLoss',
-    'HuasdorffDisstanceLoss', 'SiLogLoss'
+    'HuasdorffDisstanceLoss', 'SiLogLoss', 'EWCLoss'
 ]
