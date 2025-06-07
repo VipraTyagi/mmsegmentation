@@ -10,6 +10,7 @@ from .lovasz_loss import LovaszLoss
 from .ohem_cross_entropy_loss import OhemCrossEntropy
 from .silog_loss import SiLogLoss
 from .tversky_loss import TverskyLoss
+from .ewc_loss import EWCLoss
 from .utils import reduce_loss, weight_reduce_loss, weighted_loss
 
 __all__ = [
