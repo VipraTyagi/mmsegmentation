@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-
+from mmengine.logging import print_log
 from mmseg.registry import MODELS
 
 @MODELS.register_module()
@@ -52,15 +52,23 @@ class EWCLoss(nn.Module):
                     self.fisher[n] += p.grad.detach()**2
         for n in self.fisher:
             self.fisher[n] /= len(dataloader)
+        print_log(
+            'Fisher information updated with mean values: ' +
+            ', '.join(
+                f'{k}:{v.mean().item():.4f}' for k, v in self.fisher.items()),
+            logger='current')
         model.train(was_training)
 
     def forward(self, model: nn.Module) -> torch.Tensor:
-        """Calculate the EWC regularization term for ``model``."""
-        if self.fisher is None or self.prev_params is None:
-            return next(model.parameters()).new_tensor(0.)
-        loss = model.new_tensor(0.)
-        for n, p in model.named_parameters():
-            if n in self.fisher:
-                diff = p - self.prev_params[n]
-                loss = loss + (self.fisher[n] * diff.pow(2)).sum()
-        return 0.5 * self.ewc_lambda * loss
+            """Calculate the EWC regularization term for ``model``."""
+            if self.fisher is None or self.prev_params is None:
+                print_log('EWC loss skipped, fisher not initialized.', logger='current')
+                return next(model.parameters()).new_tensor(0.)
+            loss = next(model.parameters()).new_tensor(0.)
+            for n, p in model.named_parameters():
+                if n in self.fisher:
+                    diff = p - self.prev_params[n]
+                    loss = loss + (self.fisher[n] * diff.pow(2)).sum()
+            loss = 0.5 * self.ewc_lambda * loss
+            print_log(f'EWC loss value: {loss.item():.4f}', logger='current')
+            return loss
