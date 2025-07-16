@@ -15,15 +15,19 @@ class EWCHook(Hook):
             training.
     """
 
-    def __init__(self, ewc_lambda: float = 1.0, dataloader=None) -> None:
-        self.ewc = EWCLoss(ewc_lambda=ewc_lambda)
+    def __init__(self, ewc_lambda: float = 1.0, fisher_path: str | None = None,dataloader=None) -> None:
+        self.ewc = EWCLoss(ewc_lambda=ewc_lambda, fisher_path=fisher_path)
         self.dataloader = dataloader
 
     def before_train(self, runner) -> None:
         """Estimate Fisher information before training if dataloader given."""
         if self.dataloader is not None:
-            self.ewc.update_fisher(runner.model, self.dataloader)
-            print_log('Fisher information estimated.', logger='current')
+            if self.fisher_path is not None:
+                self.ewc.load_fisher(self.fisher_path,device='cuda')
+                print_log(f'Fisher information loaded from {self.fisher_path}.', logger='current')
+            else:
+                self.ewc.update_fisher(runner.model, self.dataloader)
+                print_log('Fisher information estimated.', logger='current')
 
     def after_train_iter(self, runner, batch_idx: int, data_batch=None,
                          outputs=None) -> None:

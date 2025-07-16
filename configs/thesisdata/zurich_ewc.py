@@ -39,10 +39,15 @@ param_scheduler = [
 ]
 
 train_dataloader = dict(batch_size=2, num_workers=2)
-val_dataloader = dict(batch_size=1, num_workers=4)
+val_dataloader = dict(batch_size=1, num_workers=4 )
+
+
+
 test_dataloader =dict(batch_size=1, num_workers=4)
 custom_hooks = [
-    dict(type='EWCHook', ewc_lambda=1.0)
+    dict(type='EWCHook', ewc_lambda=2000.0, 
+         fisher_path='/home/vipra/Thesis/Semantic_Segmentation/experiments/phenobench/fisher_diag.pth ', 
+         priority='VERY_HIGH')
 ]
 default_hooks = dict(
     timer=dict(type='IterTimerHook'),
@@ -52,7 +57,7 @@ default_hooks = dict(
     sampler_seed=dict(type='DistSamplerSeedHook'),
     visualization=dict(type='SegVisualizationHook', draw=True, show=False))
 
-train_cfg = dict(type='IterBasedTrainLoop', max_iters=160000, val_interval=1000)
+train_cfg = dict(type='IterBasedTrainLoop', max_iters=80000, val_interval=1000)
 val_cfg = dict(type='ValLoop')
 test_cfg = dict(type='TestLoop')
 default_scope = 'mmseg'
@@ -70,5 +75,5 @@ visualizer = dict(
 log_processor = dict(by_epoch=False)
 
 log_level = 'INFO'
-# load_from = '/home/vipra/Thesis/Semantic_Segmentation/models/iter_32000.pth'
-# resume = True
+load_from = '/home/vipra/Thesis/Semantic_Segmentation/models/iter_32000.pth'
+resume = True

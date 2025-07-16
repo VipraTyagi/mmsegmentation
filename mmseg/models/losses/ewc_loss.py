@@ -16,11 +16,42 @@ class EWCLoss(nn.Module):
         ewc_lambda (float): Scaling factor for the EWC penalty. Defaults to 1.0.
     """
 
-    def __init__(self, ewc_lambda: float = 1.0):
+    def __init__(self,
+                 ewc_lambda: float = 1_000.0,
+                 fisher_path: str | None = None,
+                 device: str = 'cuda'):
         super().__init__()
         self.ewc_lambda = ewc_lambda
-        self.fisher = None
-        self.prev_params = None
+        self.fisher: dict[str, torch.Tensor] = {}
+        self.prev_params: dict[str, torch.Tensor] = {}
+        
+        
+    def load_fisher(self, path: str,device: str = 'cuda') -> None:
+        """Load previously computed Fisher information and parameters."""
+        data = torch.load(path, map_location='cpu')
+        # 1 ── ensure None‑checks and move to GPU/TPU if needed
+        self.fisher = {k: v.to(device) for k, v in data.get('fisher', {}).items()}
+        self.prev_params = {k: v.to(device) for k, v in data.get('params', {}).items()}
+        print_log(f'Loaded Fisher information from {path}', logger='current')    
+        
+            # 2 ── shape / key check
+        missing, mismatch = 0, 0
+        for n, p in self.model.named_parameters():
+            if n not in self.fisher:
+                missing += 1
+                continue
+            if p.shape != self.fisher[n].shape:
+                mismatch += 1
+                raise RuntimeError(
+                    f'Shape mismatch for {n}: model {tuple(p.shape)} vs '
+                    f'fisher {tuple(self.fisher[n].shape)}')
+        if missing:
+            print_log(f'Fisher tensors loaded: {len(self.fisher)} '
+                    f'( {missing} parameters not present in Fisher )',
+                    logger='current')
+        else:
+            print_log(f'Loaded Fisher ({len(self.fisher)}) from {path}',
+                    logger='current')
 
     @torch.no_grad()
     def update_fisher(self, model: nn.Module, dataloader) -> None:
