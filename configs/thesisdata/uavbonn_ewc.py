@@ -71,5 +71,3 @@ visualizer = dict(
 log_processor = dict(by_epoch=False)
 
 log_level = 'INFO'
-load_from = '/home/vipra/Thesis/Semantic_Segmentation/experiments/phenobench/iter_32000.pth'
-# resume = True

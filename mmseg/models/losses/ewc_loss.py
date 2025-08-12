@@ -15,7 +15,6 @@ class EWCLoss(nn.Module):
     Args:
         ewc_lambda (float): Scaling factor for the EWC penalty. Defaults to 1.0.
     """
-
     def __init__(self,
                  ewc_lambda: float = 1_000.0,
                  fisher_path: str | None = None,
@@ -29,6 +28,10 @@ class EWCLoss(nn.Module):
     def load_fisher(self, path: str,device: str = 'cuda') -> None:
         """Load previously computed Fisher information and parameters."""
         data = torch.load(path, map_location='cpu')
+        
+        
+        
+        
         # 1 ── ensure None‑checks and move to GPU/TPU if needed
         self.fisher = {k: v.to(device) for k, v in data.get('fisher', {}).items()}
         self.prev_params = {k: v.to(device) for k, v in data.get('params', {}).items()}
@@ -91,15 +94,18 @@ class EWCLoss(nn.Module):
         model.train(was_training)
 
     def forward(self, model: nn.Module) -> torch.Tensor:
-            """Calculate the EWC regularization term for ``model``."""
-            if self.fisher is None or self.prev_params is None:
-                print_log('EWC loss skipped, fisher not initialized.', logger='current')
-                return next(model.parameters()).new_tensor(0.)
-            loss = next(model.parameters()).new_tensor(0.)
-            for n, p in model.named_parameters():
-                if n in self.fisher:
-                    diff = p - self.prev_params[n]
-                    loss = loss + (self.fisher[n] * diff.pow(2)).sum()
-            loss = 0.5 * self.ewc_lambda * loss
-            print_log(f'EWC loss value: {loss.item():.4f}', logger='current')
-            return loss
+        """Calculate the EWC regularization term for ``model``."""
+        if not self.fisher or not self.prev_params:
+            print_log(
+                'EWC loss skipped, fisher not initialized.', logger='current')
+            return next(model.parameters()).new_tensor(0.)
+
+        loss = next(model.parameters()).new_tensor(0.)
+        for n, p in model.named_parameters():
+            if n in self.fisher:
+                diff = p - self.prev_params[n]
+                loss = loss + (self.fisher[n] * diff.pow(2)).sum()
+
+        loss = 0.5 * self.ewc_lambda * loss
+        print_log(f'EWC loss value: {loss.item():.4f}', logger='current')
+        return loss
