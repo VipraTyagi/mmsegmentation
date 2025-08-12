@@ -2651,3 +2651,29 @@ class CropAndWeedMapping(object):
 
         results['gt_seg_map'] = seg_map
         return results
+
+@TRANSFORMS.register_module()
+class ConvertRGBMaskToLabelID(BaseTransform):
+    """Convert RGB segmentation masks (H, W, 3) to single-channel label IDs
+    using the dataset METAINFO['palette'].
+
+    This avoids hardcoding colors and works for any RGB mask dataset.
+    """
+
+    def __init__(self, color_map=None):
+        # Default mapping for UGV Bonn dataset
+        self.color_map = color_map or {
+            (0, 0, 0): 0,       # background
+            (0, 255, 0): 1,     # crop
+            (255, 0, 0): 2      # weed
+        }
+
+
+    def transform(self, results):
+        seg_map = results['gt_seg_map']  # should be np.ndarray (H, W, 3)
+        if seg_map.ndim == 3 and seg_map.shape[2] == 3:
+            mask_id = np.zeros(seg_map.shape[:2], dtype=np.uint8)
+            for color, class_id in self.color_map.items():
+                mask_id[np.all(seg_map == color, axis=-1)] = class_id
+            results['gt_seg_map'] = mask_id
+        return results

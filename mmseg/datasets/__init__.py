@@ -29,6 +29,7 @@ from .synapse import SynapseDataset
 from .phenobench_dataset import PhenobenchDataset
 from .cropandweedfour import CropAndWeedfourDataset
 from .cropandweed import CropAndWeedDataset
+from .ugvbonn import UgvBonnDataset
 # yapf: disable
 from .transforms import (CLAHE, AdjustGamma, Albu, BioMedical3DPad,
                          BioMedical3DRandomCrop, BioMedical3DRandomFlip,
@@ -50,6 +51,7 @@ from .agrigaia import AgrigaiaDataset
 from .cropandweedfour import CropAndWeedfourDataset
 from .cropandweed import CropAndWeedDataset
 from .mixed_data import mixed_data
+from .ugvbonn import UgvBonnDataset
 # yapf: enable
 __all__ = [
     'BaseSegDataset', 'BioMedical3DRandomCrop', 'BioMedical3DRandomFlip',
@@ -71,6 +73,6 @@ __all__ = [
     'LoadMultipleRSImageFromFile', 'LoadSingleRSImageFromFile',
     'ConcatCDInput', 'BaseCDDataset', 'PhenobenchDataset','DSDLSegDataset', 'BDD100KDataset',
     'NYUDataset', 'HSIDrive20Dataset', 'PhenobenchDataset', 'CropAndWeedDataset', 'CustomSegDataset', 'ZurichDataset', 'CropAndWeedDataset', 'uavbonnDataset', 
-    'uavzurichDataset', 'AgrigaiaDataset','ZurichDataMapping','CropAndWeedMapping', 'CropAndWeedfourDataset','mixed_data'
+    'uavzurichDataset', 'AgrigaiaDataset','ZurichDataMapping','CropAndWeedMapping', 'CropAndWeedfourDataset','mixed_data','UgvBonnDataset'
 
 ]

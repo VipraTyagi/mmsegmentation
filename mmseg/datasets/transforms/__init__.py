@@ -13,7 +13,7 @@ from .transforms import (CLAHE, AdjustGamma, Albu, BioMedical3DPad,
                          RandomDepthMix, RandomFlip, RandomMosaic,
                          RandomRotate, RandomRotFlip, Rerange, Resize,
                          ResizeShortestEdge, ResizeToMultiple, RGB2Gray,
-                         SegRescale, LoadAnnotationsFromNPZ, PhenoBenchReduceClasses, ZurichDataMapping ,CropAndWeedMapping)
+                         SegRescale, LoadAnnotationsFromNPZ, PhenoBenchReduceClasses, ZurichDataMapping ,CropAndWeedMapping,ConvertRGBMaskToLabelID)
 
 # yapf: enable
 __all__ = [
@@ -27,5 +27,5 @@ __all__ = [
     'RandomRotFlip', 'Albu', 'LoadSingleRSImageFromFile', 'ConcatCDInput',
     'LoadMultipleRSImageFromFile', 'LoadDepthAnnotation', 'RandomDepthMix',
     'RandomFlip', 'Resize', 'LoadAnnotationsFromNPZ', 'PhenoBenchReduceClasses', 'CropAndWeedDataset','uavbonnDataset','uavzurichDataset','AgrigaiaDataset'
-    'ZurichDataMapping','CropAndWeedMapping'
+    'ZurichDataMapping','CropAndWeedMapping','ConvertRGBMaskToLabelID'
 ]

@@ -1,5 +1,5 @@
 _base_ = [
-    '../_base_/models/deeplabv3plus_r50-d8.py',    '../_base_/datasets/uavzurich.py',
+    '../_base_/models/deeplabv3plus_r50-d8.py',    '../_base_/datasets/ugvbonn.py',
     '../_base_/default_runtime.py', '../_base_/schedules/schedule_80k.py'
 ]
 num_classes = 3
@@ -39,25 +39,18 @@ param_scheduler = [
 ]
 
 train_dataloader = dict(batch_size=2, num_workers=2)
-val_dataloader = dict(batch_size=1, num_workers=4 )
-
-
-
+val_dataloader = dict(batch_size=1, num_workers=4)
 test_dataloader =dict(batch_size=1, num_workers=4)
-custom_hooks = [
-    dict(type='EWCHook', ewc_lambda=10, 
-         fisher_path='/home/vipra/Thesis/Semantic_Segmentation/experiments/phenobench/fisher_diag.pth', 
-         priority='VERY_HIGH')]
 
 default_hooks = dict(
     timer=dict(type='IterTimerHook'),
     logger=dict(type='LoggerHook', interval=50, log_metric_by_epoch=False),
     param_scheduler=dict(type='ParamSchedulerHook'),
-    checkpoint=dict(type='CheckpointHook', by_epoch=False, interval=16000, save_best='mIoU', rule='greater', max_keep_ckpts=3),
+    checkpoint=dict(type='CheckpointHook', by_epoch=False, interval=16000),
     sampler_seed=dict(type='DistSamplerSeedHook'),
     visualization=dict(type='SegVisualizationHook', draw=True, show=False))
 
-train_cfg = dict(type='IterBasedTrainLoop', max_iters=80000,val_interval=1000)
+train_cfg = dict(type='IterBasedTrainLoop', max_iters=160000, val_interval=1000)
 val_cfg = dict(type='ValLoop')
 test_cfg = dict(type='TestLoop')
 default_scope = 'mmseg'
@@ -75,5 +68,5 @@ visualizer = dict(
 log_processor = dict(by_epoch=False)
 
 log_level = 'INFO'
-load_from = '/home/vipra/Thesis/Semantic_Segmentation/models/iter_32000.pth'
-resume = True
+# load_from = '/home/vipra/Thesis/Semantic_Segmentation/models/iter_32000.pth'
+# resume = True
