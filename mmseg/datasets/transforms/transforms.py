@@ -2677,3 +2677,52 @@ class ConvertRGBMaskToLabelID(BaseTransform):
                 mask_id[np.all(seg_map == color, axis=-1)] = class_id
             results['gt_seg_map'] = mask_id
         return results
+    
+    
+@TRANSFORMS.register_module()
+class RetryRandomCropWithClass(BaseTransform):
+    """Try RandomCrop up to N times until crop includes any of the required classes.
+
+    Args:
+        crop_size (tuple[int, int]): Same as RandomCrop.
+        must_include (list[int]): Class ids that should be present in the crop.
+        max_attempts (int): Number of attempts before falling back.
+        cat_max_ratio (float): Forwarded to inner RandomCrop.
+        ignore_index (int): Forwarded to inner RandomCrop.
+    """
+    def __init__(self,
+                 crop_size=(512, 512),
+                 must_include=(2,),
+                 max_attempts=10,
+                 cat_max_ratio=1.0,
+                 ignore_index=255):
+        self.must_include = set(must_include)
+        self.max_attempts = int(max_attempts)
+        self.inner = RandomCrop(
+            crop_size=crop_size,
+            cat_max_ratio=cat_max_ratio,
+            ignore_index=ignore_index
+        )
+
+    def _get_seg(self, res):
+        # mmseg keys may vary across versions; support both
+        if 'gt_seg_map' in res and res['gt_seg_map'] is not None:
+            return res['gt_seg_map']
+        if 'gt_semantic_seg' in res and res['gt_semantic_seg'] is not None:
+            return res['gt_semantic_seg']
+        return None
+
+    def transform(self, results):
+        last = None
+        for _ in range(self.max_attempts):
+            cand = self.inner.transform(copy.deepcopy(results))
+            seg = self._get_seg(cand)
+            if seg is None:
+                # No GT? accept whatever RandomCrop did
+                return cand
+            ids = set(np.unique(seg).tolist())
+            if ids & self.must_include:
+                return cand
+            last = cand
+        # Fallback: return the last random crop
+        return last if last is not None else self.inner.transform(results)
